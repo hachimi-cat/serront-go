@@ -2,9 +2,10 @@
 
 Typed Go client for the [serront.com](https://serront.com) services-storefront REST API.
 
-Current version: **v0.1.0** — full API parity: storefront, services,
-orders (+ proof download), modules, ledger, payouts, API keys, webhook
-subscriptions, billing and the public buyer surface.
+Current version: **v0.2.0** — adds `Client.API`, every feature route
+generated from the API spec. (v0.1.0: storefront, services, orders
+(+ proof download), modules, ledger, payouts, API keys, webhook
+subscriptions, billing and the public buyer surface.)
 
 ```bash
 go get github.com/hachimi-cat/serront-go
@@ -117,6 +118,22 @@ pay, err := c.Public.Pay(ctx, placed.AccessToken)       // Payment module → Ho
 | `WebhookSubscriptions` | `List`, `Create` (secret returned once), `Update` (active), `Delete` |
 | `Billing` | `Get` (subscription + effectiveTier + tier table), `Checkout(tier)` → hosted checkout URL |
 | `Public` | `GetStorefront`, `CreateOrder`, `ValidateDiscount`, `GetOrder`, `ReplyOrder`, `ClaimPayment`, `Pay`, `UploadProof` (no token) |
+| `API` | Every feature route, one method each — generated from the API spec (`api_generated.go`) |
+
+`c.API.<Area><Action>(ctx, pathParams…, *<Area><Action>Args)` covers every
+route of the API, Bearer-authenticated like the resources above (the
+`/api/v1/public/*` routes without a token), and returns the response's
+`data` as `json.RawMessage` (routes that answer with a file or an event
+stream — invoice PDFs, proofs, `…/stream` — are for the resources above).
+Required fields are plain values, optional ones pointers (`serront.Ptr`),
+slices or maps; `Body` passes the whole JSON body (a body field named `body`
+is `BodyField`).
+
+```go
+data, err := c.API.OrdersUpdate(ctx, orderID, &serront.OrdersUpdateArgs{
+	Status: serront.Ptr("confirmed"),
+})
+```
 
 Errors return `*serront.Error` carrying the API envelope's `error.code`
 (`NOT_FOUND`, `VALIDATION_ERROR`, `LIMIT_REACHED`, `UPGRADE_REQUIRED`,
