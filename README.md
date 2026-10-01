@@ -143,4 +143,4 @@ Errors return `*serront.Error` carrying the API envelope's `error.code`
 
 Sister to:
 - [`@forjio/serront`](https://www.npmjs.com/package/@forjio/serront) (JS/TS)
-- [`forjio-serront`](https://pypi.org/project/forjio-serront/) (Python)
+- [`serront`](https://pypi.org/project/serront/) (Python)
