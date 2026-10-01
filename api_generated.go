@@ -281,15 +281,15 @@ func (a *GeneratedAPI) CertificationsUpdate(ctx context.Context, id string, p *C
 	return a.c.apigenRequest(ctx, "PATCH", path, nil, payload)
 }
 
+// ClientGetOrders calls GET /api/v1/client/orders/{id}: Get an order.
+func (a *GeneratedAPI) ClientGetOrders(ctx context.Context, id string) (json.RawMessage, error) {
+	path := "/api/v1/client/orders/" + url.PathEscape(id)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
+}
+
 // ClientOrders calls GET /api/v1/client/orders: List orders.
 func (a *GeneratedAPI) ClientOrders(ctx context.Context) (json.RawMessage, error) {
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/client/orders", nil, nil)
-}
-
-// ClientOrders2 calls GET /api/v1/client/orders/{id}: Get an order.
-func (a *GeneratedAPI) ClientOrders2(ctx context.Context, id string) (json.RawMessage, error) {
-	path := "/api/v1/client/orders/" + url.PathEscape(id)
-	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
 // ClientOrdersInvoicePdf calls GET /api/v1/client/orders/{id}/invoice.pdf: The order's Plugipay invoice PDF for the signed-in portal client — same stream as the tokenized buyer route; the session + the client-order scope are the credential. 404 while no invoice.
@@ -733,9 +733,15 @@ func (a *GeneratedAPI) FulfillmentDeliveries(ctx context.Context) (json.RawMessa
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/fulfillment/deliveries", nil, nil)
 }
 
-// FulfillmentDeliveries2 calls GET /api/v1/fulfillment/deliveries/{id}: Get a delivery.
-func (a *GeneratedAPI) FulfillmentDeliveries2(ctx context.Context, id string) (json.RawMessage, error) {
+// FulfillmentGetDeliveries calls GET /api/v1/fulfillment/deliveries/{id}: Get a delivery.
+func (a *GeneratedAPI) FulfillmentGetDeliveries(ctx context.Context, id string) (json.RawMessage, error) {
 	path := "/api/v1/fulfillment/deliveries/" + url.PathEscape(id)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
+}
+
+// FulfillmentGetShipments calls GET /api/v1/fulfillment/shipments/{id}: Get a shipment.
+func (a *GeneratedAPI) FulfillmentGetShipments(ctx context.Context, id string) (json.RawMessage, error) {
+	path := "/api/v1/fulfillment/shipments/" + url.PathEscape(id)
 	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
@@ -848,7 +854,7 @@ func (a *GeneratedAPI) FulfillmentLicensesRevoke(ctx context.Context, id string)
 
 // FulfillmentLicensesValidateArgs are the inputs of GeneratedAPI.FulfillmentLicensesValidate.
 type FulfillmentLicensesValidateArgs struct {
-	// Key is "key" in the query.
+	// Key is "key" in the query, required.
 	Key any `query:"key"`
 
 	// ProductID is "productId" in the query.
@@ -886,12 +892,6 @@ func (a *GeneratedAPI) FulfillmentShipments(ctx context.Context, p *FulfillmentS
 		q.Set("status", apigenQueryValue(p.Status))
 	}
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/fulfillment/shipments", q, nil)
-}
-
-// FulfillmentShipments2 calls GET /api/v1/fulfillment/shipments/{id}: Get a shipment.
-func (a *GeneratedAPI) FulfillmentShipments2(ctx context.Context, id string) (json.RawMessage, error) {
-	path := "/api/v1/fulfillment/shipments/" + url.PathEscape(id)
-	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
 // FulfillmentShipmentsCancelArgs are the inputs of GeneratedAPI.FulfillmentShipmentsCancel.
@@ -941,6 +941,15 @@ func (a *GeneratedAPI) FulfillmentShippingOrigin(ctx context.Context) (json.RawM
 
 // FulfillmentShippingRatesArgs are the inputs of GeneratedAPI.FulfillmentShippingRates.
 type FulfillmentShippingRatesArgs struct {
+	// Destination is "destination" in the body.
+	Destination any `json:"destination,omitempty"`
+
+	// Insurance is "insurance" in the body.
+	Insurance any `json:"insurance,omitempty"`
+
+	// Items is "items" in the body.
+	Items any `json:"items,omitempty"`
+
 	// Body is the whole JSON body, for what the fields above do not cover; the fields
 	// that are set replace its keys.
 	Body map[string]any `json:"-"`
@@ -952,6 +961,15 @@ func (a *GeneratedAPI) FulfillmentShippingRates(ctx context.Context, p *Fulfillm
 		p = &FulfillmentShippingRatesArgs{}
 	}
 	payload := apigenBody(p.Body)
+	if p.Destination != nil {
+		payload["destination"] = p.Destination
+	}
+	if p.Insurance != nil {
+		payload["insurance"] = p.Insurance
+	}
+	if p.Items != nil {
+		payload["items"] = p.Items
+	}
 	return a.c.apigenRequest(ctx, "POST", "/api/v1/fulfillment/shipping/rates", nil, payload)
 }
 
@@ -2224,6 +2242,12 @@ func (a *GeneratedAPI) PublicDomainsResolve(ctx context.Context, p *PublicDomain
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/public/domains/resolve", q, nil)
 }
 
+// PublicGetStorefrontBlog calls GET /api/v1/public/storefront/{slug}/blog/{postSlug}: Single published post.
+func (a *GeneratedAPI) PublicGetStorefrontBlog(ctx context.Context, slug string, postSlug string) (json.RawMessage, error) {
+	path := "/api/v1/public/storefront/" + url.PathEscape(slug) + "/blog/" + url.PathEscape(postSlug)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
+}
+
 // PublicOrders calls GET /api/v1/public/orders/{accessToken}: Get an order.
 func (a *GeneratedAPI) PublicOrders(ctx context.Context, accessToken string) (json.RawMessage, error) {
 	path := "/api/v1/public/orders/" + url.PathEscape(accessToken)
@@ -2347,12 +2371,6 @@ func (a *GeneratedAPI) PublicStorefront(ctx context.Context, slug string) (json.
 // PublicStorefrontBlog calls GET /api/v1/public/storefront/{slug}/blog: Published posts list.
 func (a *GeneratedAPI) PublicStorefrontBlog(ctx context.Context, slug string) (json.RawMessage, error) {
 	path := "/api/v1/public/storefront/" + url.PathEscape(slug) + "/blog"
-	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
-}
-
-// PublicStorefrontBlog2 calls GET /api/v1/public/storefront/{slug}/blog/{postSlug}: Single published post.
-func (a *GeneratedAPI) PublicStorefrontBlog2(ctx context.Context, slug string, postSlug string) (json.RawMessage, error) {
-	path := "/api/v1/public/storefront/" + url.PathEscape(slug) + "/blog/" + url.PathEscape(postSlug)
 	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
@@ -3141,6 +3159,34 @@ func (a *GeneratedAPI) WebhookSubscriptionsUpdate(ctx context.Context, id string
 	}
 	path := "/api/v1/webhook-subscriptions/" + url.PathEscape(id)
 	return a.c.apigenRequest(ctx, "PATCH", path, nil, payload)
+}
+
+// ClientOrders2 is the old name of ClientGetOrders (GET /api/v1/client/orders/{id}).
+//
+// Deprecated: use ClientGetOrders.
+func (a *GeneratedAPI) ClientOrders2(ctx context.Context, id string) (json.RawMessage, error) {
+	return a.ClientGetOrders(ctx, id)
+}
+
+// FulfillmentDeliveries2 is the old name of FulfillmentGetDeliveries (GET /api/v1/fulfillment/deliveries/{id}).
+//
+// Deprecated: use FulfillmentGetDeliveries.
+func (a *GeneratedAPI) FulfillmentDeliveries2(ctx context.Context, id string) (json.RawMessage, error) {
+	return a.FulfillmentGetDeliveries(ctx, id)
+}
+
+// FulfillmentShipments2 is the old name of FulfillmentGetShipments (GET /api/v1/fulfillment/shipments/{id}).
+//
+// Deprecated: use FulfillmentGetShipments.
+func (a *GeneratedAPI) FulfillmentShipments2(ctx context.Context, id string) (json.RawMessage, error) {
+	return a.FulfillmentGetShipments(ctx, id)
+}
+
+// PublicStorefrontBlog2 is the old name of PublicGetStorefrontBlog (GET /api/v1/public/storefront/{slug}/blog/{postSlug}).
+//
+// Deprecated: use PublicGetStorefrontBlog.
+func (a *GeneratedAPI) PublicStorefrontBlog2(ctx context.Context, slug string, postSlug string) (json.RawMessage, error) {
+	return a.PublicGetStorefrontBlog(ctx, slug, postSlug)
 }
 
 // apigenBody copies Body, so the fields set over it never change the caller's map.
